@@ -1,6 +1,7 @@
 {
   "name": "Town Directory Tamu",
   "short_name": "TownDir",
+  "description": "Tamu Town Directory - Find Shops, Hospitals, Schools, Restaurants quickly",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#2563EB",
@@ -9,7 +10,8 @@
     {
       "src": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
