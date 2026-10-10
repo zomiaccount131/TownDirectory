@@ -2,339 +2,758 @@
 <!DOCTYPE html>
 <html lang="my">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#087f5b">
-<title>Myanmar Town Directory</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1565c0">
+  <meta name="description" content="မြန်မာနိုင်ငံရှိ ဆိုင်များ၊ စားသောက်ဆိုင်များ၊ ဟိုတယ်များနှင့် ဝန်ဆောင်မှုများကို ရှာဖွေပါ။">
+  <link rel="manifest" href="manifest.json">
+  <title>Myanmar Town Directory</title>
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#f2f6f4;color:#1d2b27;font-family:Arial,sans-serif}
-header{padding:22px 16px;background:#087f5b;color:white}
-header h1{margin:0;font-size:24px}
-header p{margin:8px 0 0;font-size:14px}
-nav{display:flex;gap:8px;padding:10px;background:white;position:sticky;top:0;z-index:5}
-nav button{flex:1;padding:12px 5px;border:0;border-radius:9px;background:#e8f5ef;color:#087f5b;font-weight:bold}
-nav button.active{background:#087f5b;color:white}
-main{max-width:720px;margin:auto;padding:15px}
-.panel,.place{background:white;padding:15px;border-radius:13px;margin-bottom:13px;box-shadow:0 2px 8px #00000008}
-h2{font-size:19px;margin:5px 0 14px}
-h3{margin:8px 0}
-label{font-size:14px;font-weight:bold}
-input,select,textarea{display:block;width:100%;padding:12px;margin:8px 0 13px;border:1px solid #d4e0da;border-radius:9px;background:white;font:inherit}
-textarea{min-height:70px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
-.category{padding:12px 4px;border:1px solid #d9e8df;border-radius:9px;background:white;color:#087f5b;font-weight:bold}
-.category.active{background:#087f5b;color:white}
-.tag{display:inline-block;padding:5px 8px;border-radius:6px;background:#e6f5ec;color:#087f5b;font-size:12px}
-.details{color:#53635b;font-size:14px;line-height:1.8}
-.actions{display:flex;gap:8px;margin-top:12px}
-.actions a,.actions button{flex:1;text-align:center;padding:10px 4px;border:0;border-radius:8px;background:#e6f5ec;color:#087f5b;text-decoration:none;font-weight:bold;font-size:13px}
-.primary{width:100%;padding:13px;background:#087f5b;color:white;border:0;border-radius:9px;font-weight:bold}
-.secondary{padding:10px;border:0;border-radius:8px;background:#e7eee9;color:#214537}
-.danger{background:#ffeded!important;color:#ad2525!important}
-.hidden{display:none!important}
-.muted{font-size:13px;color:#687871;line-height:1.6}
-.notice{background:#fff7df;color:#715316;padding:12px;border-radius:9px;font-size:13px;line-height:1.6}
-.empty{text-align:center;padding:24px;color:#75837b}
-footer{text-align:center;color:#78867e;font-size:12px;padding:20px}
-</style>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans Myanmar", sans-serif;
+      background: #f3f6fb;
+      color: #202938;
+    }
+
+    header {
+      background: #1565c0;
+      color: white;
+      padding: 22px 16px;
+    }
+
+    .header-inner, main {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    header h1 {
+      font-size: 25px;
+      margin: 0 0 8px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: .9;
+      font-size: 14px;
+    }
+
+    main { padding: 16px; }
+
+    .search-box, select, input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d6dce5;
+      border-radius: 10px;
+      font-size: 15px;
+      background: white;
+      color: #202938;
+    }
+
+    .search-box { margin-bottom: 12px; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #e5eaf2;
+      color: #243247;
+    }
+
+    button.primary {
+      background: #1565c0;
+      color: white;
+    }
+
+    button.danger {
+      background: #c62828;
+      color: white;
+    }
+
+    button.active {
+      background: #1565c0;
+      color: white;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 20px 0 12px;
+    }
+
+    .section-heading h2 {
+      font-size: 19px;
+      margin: 0;
+    }
+
+    .business-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .business-card {
+      background: white;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 3px 12px #1d35570c;
+      min-width: 0;
+    }
+
+    .business-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #eaf2ff;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .business-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .business-card p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #647084;
+      margin: 5px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #e8f1ff;
+      color: #1557a5;
+      border-radius: 20px;
+      padding: 4px 9px;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .card-actions button {
+      flex: 1;
+      padding: 10px 6px;
+    }
+
+    .empty {
+      text-align: center;
+      background: white;
+      padding: 28px 12px;
+      border-radius: 12px;
+      color: #647084;
+      grid-column: 1 / -1;
+    }
+
+    .panel {
+      background: white;
+      padding: 16px;
+      border-radius: 14px;
+      margin-top: 20px;
+      box-shadow: 0 3px 12px #1d35570c;
+    }
+
+    .panel h2 { margin-top: 0; font-size: 19px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+      min-width: 0;
+    }
+
+    .field label { font-size: 13px; font-weight: bold; }
+
+    .full { grid-column: 1 / -1; }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hidden { display: none !important; }
+
+    .notice {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #647084;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      color: #748094;
+      font-size: 12px;
+      padding: 24px 12px;
+    }
+
+    @media (min-width: 700px) {
+      .business-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      header { padding: 28px 20px; }
+      main { padding: 22px; }
+    }
+
+    @media (max-width: 380px) {
+      .business-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+    }
+  </style>
 </head>
-<body>
 
+<body>
 <header>
-<h1>🏘️ Myanmar Directory</h1>
-<p>မြို့နယ်အလိုက် ဆိုင်များနှင့် ဝန်ဆောင်မှုများ</p>
+  <div class="header-inner">
+    <h1>🇲🇲 Myanmar Directory</h1>
+    <p>မြို့နဲ့ ဒေသအလိုက် ဆိုင်များနှင့် ဝန်ဆောင်မှုများကို ရှာဖွေပါ။</p>
+  </div>
 </header>
 
-<nav>
-<button class="active" data-page="home">🏠 Home</button>
-<button data-page="admin">🔐 Admin</button>
-</nav>
-
 <main>
-<section id="homePage">
-<div class="panel">
-<label for="town">မြို့နယ်ရွေးချယ်ပါ</label>
-<select id="town">
-<option value="All">မြို့နယ်အားလုံး</option>
-<option>ရန်ကုန်</option>
-<option>မန္တလေး</option>
-<option>နေပြည်တော်</option>
-<option>မော်လမြိုင်</option>
-<option>ပုဂံ</option>
-<option>တောင်ကြီး</option>
-<option>ပဲခူး</option>
-</select>
+  <input
+    id="searchInput"
+    class="search-box"
+    type="search"
+    placeholder="🔍 ဆိုင်အမည်၊ လိပ်စာ၊ ဖုန်း ရှာရန်..."
+    aria-label="ဆိုင်ရှာရန်"
+  >
 
-<label for="search">ဆိုင်ရှာရန်</label>
-<input id="search" placeholder="ဆိုင်အမည်၊ လိပ်စာ ရိုက်ပါ...">
-</div>
+  <div class="filters">
+    <select id="townFilter" aria-label="မြို့ရွေးရန်">
+      <option value="">မြို့အားလုံး</option>
+      <option>ရန်ကုန်</option>
+      <option>မန္တလေး</option>
+      <option>နေပြည်တော်</option>
+      <option>မော်လမြိုင်</option>
+      <option>ပုဂံ</option>
+      <option>တောင်ကြီး</option>
+      <option>ပဲခူး</option>
+    </select>
 
-<div class="grid" id="categories">
-<button class="category active" data-cat="All">📋 အားလုံး</button>
-<button class="category" data-cat="Shop">🛍️ ဆိုင်များ</button>
-<button class="category" data-cat="Food">🍜 စားသောက်ဆိုင်</button>
-<button class="category" data-cat="Health">🏥 ဆေးခန်း</button>
-<button class="category" data-cat="Hotel">🏨 ဟိုတယ်</button>
-<button class="category" data-cat="Service">🔧 ဝန်ဆောင်မှု</button>
-</div>
+    <select id="sortFilter" aria-label="စီစဉ်ရန်">
+      <option value="newest">အသစ်ထည့်ထားသော</option>
+      <option value="name">ဆိုင်အမည် A–Z</option>
+    </select>
+  </div>
 
-<h2>📍 ဆိုင်နှင့် ဝန်ဆောင်မှုများ</h2>
-<div id="places"></div>
-</section>
+  <div class="categories" id="categoryButtons">
+    <button class="active" data-category="">အားလုံး</button>
+    <button data-category="ဆိုင်">🛍️ ဆိုင်</button>
+    <button data-category="စားသောက်ဆိုင်">🍜 စားသောက်ဆိုင်</button>
+    <button data-category="ကျန်းမာရေး">🏥 ကျန်းမာရေး</button>
+    <button data-category="ဟိုတယ်">🏨 ဟိုတယ်</button>
+    <button data-category="ဝန်ဆောင်မှု">🛠️ ဝန်ဆောင်မှု</button>
+  </div>
 
-<section id="adminPage" class="hidden">
-<div class="panel" id="loginPanel">
-<h2>🔐 Admin Login</h2>
-<p class="muted">Demo PIN: 1234 (စမ်းသပ်ရန်သာဖြစ်ပြီး လုံခြုံသော Login မဟုတ်ပါ။)</p>
-<label for="pin">Admin PIN</label>
-<input id="pin" type="password" inputmode="numeric" placeholder="PIN ထည့်ပါ">
-<button class="primary" id="loginBtn">Login</button>
-<p id="loginMessage" class="muted"></p>
-</div>
+  <div class="section-heading">
+    <h2>📍 ဆိုင်စာရင်း</h2>
+    <span id="resultCount">0 ဆိုင်</span>
+  </div>
 
-<div id="adminPanel" class="hidden">
-<div class="panel">
-<h2 id="formTitle">➕ ဆိုင်အသစ်ထည့်ရန်</h2>
-<form id="placeForm">
-<input id="editId" type="hidden">
+  <div class="business-grid" id="businessList"></div>
 
-<label for="name">ဆိုင်အမည် *</label>
-<input id="name" required maxlength="100" placeholder="ဆိုင်အမည်">
+  <section class="panel">
+    <h2>🔐 Admin Panel</h2>
+    <p class="notice">
+      ဆိုင်စာရင်းအသစ်ထည့်ရန် Admin ဝင်ပါ။
+      ဒီ Demo ရဲ့ PIN က 1234 ဖြစ်ပါတယ်။
+      အမှန်တကယ် အွန်လိုင်းအသုံးပြုမယ့်အခါ ဒီ PIN ကို လုံခြုံတဲ့
+      Authentication စနစ်နဲ့ အစားထိုးဖို့ လိုပါတယ်။
+    </p>
 
-<label for="category">အမျိုးအစား *</label>
-<select id="category" required>
-<option value="Shop">ဆိုင်များ</option>
-<option value="Food">စားသောက်ဆိုင်</option>
-<option value="Health">ဆေးခန်း</option>
-<option value="Hotel">ဟိုတယ်</option>
-<option value="Service">ဝန်ဆောင်မှု</option>
-</select>
+    <div id="loginArea">
+      <div class="field">
+        <label for="adminPin">Admin PIN</label>
+        <input id="adminPin" type="password" inputmode="numeric"
+          placeholder="Admin PIN ထည့်ပါ">
+      </div>
+      <button class="primary" id="loginButton">Admin ဝင်မယ်</button>
+      <p id="loginMessage" class="notice" role="status"></p>
+    </div>
 
-<label for="placeTown">မြို့နယ် *</label>
-<input id="placeTown" required placeholder="ဥပမာ - ရန်ကုန်">
+    <div id="adminArea" class="hidden">
+      <div class="section-heading">
+        <h2 id="formTitle">ဆိုင်အသစ်ထည့်ရန်</h2>
+        <button id="logoutButton">ထွက်မယ်</button>
+      </div>
 
-<label for="address">လိပ်စာ *</label>
-<textarea id="address" required placeholder="လမ်း၊ ရပ်ကွက်၊ မြို့နယ်"></textarea>
+      <form id="businessForm">
+        <input id="businessId" type="hidden">
 
-<label for="phone">ဖုန်းနံပါတ်</label>
-<input id="phone" type="tel" maxlength="25" placeholder="ဖုန်းနံပါတ်">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="businessName">ဆိုင်အမည် *</label>
+            <input id="businessName" required maxlength="100"
+              placeholder="ဥပမာ - ABC စတိုး">
+          </div>
 
-<label for="mapUrl">Google Maps Link (ရှိလျှင်)</label>
-<input id="mapUrl" type="url" placeholder="https://maps.google.com/...">
+          <div class="field">
+            <label for="businessTown">မြို့ *</label>
+            <select id="businessTown" required>
+              <option value="">မြို့ရွေးပါ</option>
+              <option>ရန်ကုန်</option>
+              <option>မန္တလေး</option>
+              <option>နေပြည်တော်</option>
+              <option>မော်လမြိုင်</option>
+              <option>ပုဂံ</option>
+              <option>တောင်ကြီး</option>
+              <option>ပဲခူး</option>
+            </select>
+          </div>
 
-<button class="primary" type="submit">💾 သိမ်းမည်</button>
-<button class="secondary hidden" type="button" id="cancelEdit" style="width:100%;margin-top:8px">ပယ်ဖျက်မည်</button>
-</form>
-</div>
+          <div class="field">
+            <label for="businessCategory">အမျိုးအစား *</label>
+            <select id="businessCategory" required>
+              <option value="ဆိုင်">ဆိုင်</option>
+              <option value="စားသောက်ဆိုင်">စားသောက်ဆိုင်</option>
+              <option value="ကျန်းမာရေး">ကျန်းမာရေး</option>
+              <option value="ဟိုတယ်">ဟိုတယ်</option>
+              <option value="ဝန်ဆောင်မှု">ဝန်ဆောင်မှု</option>
+            </select>
+          </div>
 
-<div class="panel">
-<h2>📋 ဆိုင်စာရင်း စီမံရန်</h2>
-<div id="adminPlaces"></div>
-<button class="secondary" id="logoutBtn">Logout</button>
-</div>
+          <div class="field full">
+            <label for="businessAddress">လိပ်စာ *</label>
+            <textarea id="businessAddress" rows="2" required
+              maxlength="250" placeholder="ဆိုင်လိပ်စာ"></textarea>
+          </div>
 
-<div class="notice">ဤ Demo သည် လက်ရှိ Browser ထဲမှာသာ အချက်အလက်သိမ်းပါသည်။ အခြားဖုန်းများနှင့် မျှဝေရန် Database ချိတ်ဆက်ရန် လိုအပ်သည်။</div>
-</div>
-</section>
+          <div class="field full">
+            <label for="businessPhone">ဖုန်းနံပါတ်</label>
+            <input id="businessPhone" type="tel" maxlength="40"
+              placeholder="ဖုန်းနံပါတ်">
+          </div>
+
+          <div class="field full">
+            <label for="businessMap">Google Maps Link (မဖြစ်မနေ မလိုပါ)</label>
+            <input id="businessMap" type="url" maxlength="500"
+              placeholder="https://maps.google.com/...">
+          </div>
+
+          <div class="field full">
+            <label for="businessDescription">အကြောင်းအရာ</label>
+            <textarea id="businessDescription" rows="3" maxlength="500"
+              placeholder="ဆိုင်အကြောင်း အတိုချုံး"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="primary" type="submit" id="saveButton">ဆိုင်သိမ်းမယ်</button>
+          <button type="button" id="cancelEditButton" class="hidden">မပြင်တော့ဘူး</button>
+        </div>
+        <p id="formMessage" class="notice" role="status"></p>
+      </form>
+
+      <p class="notice">
+        မှတ်ချက် - လက်ရှိစာရင်းများကို ဒီ Browser ရဲ့ localStorage ထဲမှာပဲ
+        သိမ်းထားပါတယ်။ အခြားဖုန်းများနဲ့ မျှဝေဖို့ Firebase လို Online
+        Database ကို နောက်မှ ချိတ်ဆက်ရပါမယ်။
+      </p>
+    </div>
+  </section>
 </main>
 
-<footer>Myanmar Town Directory • Demo Version</footer>
+<footer>
+  Myanmar Town Directory · Community Business Listing
+</footer>
 
 <script>
-const KEY="townDirectoryData";
-const ADMIN_PIN="1234";
+(() => {
+  "use strict";
 
-const samples=[
-{id:"s1",name:"နမူနာ ကုန်စုံဆိုင်",category:"Shop",town:"ရန်ကုန်",address:"နမူနာလိပ်စာ၊ ရန်ကုန်",phone:"",mapUrl:""},
-{id:"s2",name:"နမူနာ စားသောက်ဆိုင်",category:"Food",town:"မန္တလေး",address:"နမူနာလိပ်စာ၊ မန္တလေး",phone:"",mapUrl:""},
-{id:"s3",name:"နမူနာ ဆေးခန်း",category:"Health",town:"ပဲခူး",address:"နမူနာလိပ်စာ၊ ပဲခူး",phone:"",mapUrl:""}
-];
+  const STORAGE_KEY = "myanmarTownDirectoryBusinesses_v1";
+  const ADMIN_PIN = "1234"; // Demo only. Not secure for production.
 
-function loadData(){
-try{
-const saved=localStorage.getItem(KEY);
-return saved?JSON.parse(saved):samples;
-}catch(e){return samples;}
-}
-let places=loadData();
-let categoryFilter="All";
-let isAdmin=false;
+  const $ = id => document.getElementById(id);
 
-function saveData(){
-try{
-localStorage.setItem(KEY,JSON.stringify(places));
-return true;
-}catch(e){
-alert("Data သိမ်းမရပါ။ Browser Storage ကို စစ်ဆေးပါ။");
-return false;
-}
-}
+  let activeCategory = "";
+  let isAdmin = false;
 
-function safe(value){
-return String(value??"").replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
-}
+  const demoBusinesses = [
+    {
+      id: "demo-1",
+      name: "နမူနာ အထည်ဆိုင်",
+      town: "ရန်ကုန်",
+      category: "ဆိုင်",
+      address: "ရန်ကုန်မြို့ (နမူနာလိပ်စာ)",
+      phone: "",
+      map: "",
+      description: "စမ်းသပ်ရန် ထည့်ထားသော နမူနာစာရင်း။",
+      createdAt: 1,
+      demo: true
+    },
+    {
+      id: "demo-2",
+      name: "နမူနာ စားသောက်ဆိုင်",
+      town: "မန္တလေး",
+      category: "စားသောက်ဆိုင်",
+      address: "မန္တလေးမြို့ (နမူနာလိပ်စာ)",
+      phone: "",
+      map: "",
+      description: "ဤစာရင်းသည် နမူနာသာ ဖြစ်သည်။",
+      createdAt: 2,
+      demo: true
+    },
+    {
+      id: "demo-3",
+      name: "နမူနာ ဟိုတယ်",
+      town: "ပုဂံ",
+      category: "ဟိုတယ်",
+      address: "ပုဂံမြို့ (နမူနာလိပ်စာ)",
+      phone: "",
+      map: "",
+      description: "အမှန်တကယ် လုပ်ငန်းတစ်ခု မဟုတ်ပါ။",
+      createdAt: 3,
+      demo: true
+    }
+  ];
 
-const names={Shop:"ဆိုင်များ",Food:"စားသောက်ဆိုင်",Health:"ဆေးခန်း",Hotel:"ဟိုတယ်",Service:"ဝန်ဆောင်မှု"};
+  function loadBusinesses() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved !== null) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (error) {
+      console.error("Could not read saved businesses:", error);
+    }
+    return demoBusinesses.map(item => ({ ...item }));
+  }
 
-function maps(p){
-if(p.mapUrl && /^https:\/\/(www\.)?(google\.[a-z.]+|maps\.google\.com)/i.test(p.mapUrl))return p.mapUrl;
-return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.name+" "+p.address+" "+p.town+" Myanmar");
-}
+  let businesses = loadBusinesses();
 
-function render(){
-const town=document.getElementById("town").value;
-const q=document.getElementById("search").value.toLowerCase().trim();
-const found=places.filter(p=>
-(town==="All"||p.town===town)&&
-(categoryFilter==="All"||p.category===categoryFilter)&&
-[p.name,p.address,p.town,p.category].join(" ").toLowerCase().includes(q)
-);
-const target=document.getElementById("places");
+  function persistBusinesses() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(businesses));
+      return true;
+    } catch (error) {
+      console.error("Could not save businesses:", error);
+      alert("စာရင်းသိမ်းမရပါ။ Browser storage ကို စစ်ကြည့်ပါ။");
+      return false;
+    }
+  }
 
-if(!found.length){
-target.innerHTML='<div class="empty">ဆိုင်မတွေ့ပါ။</div>';
-return;
-}
+  function iconFor(category) {
+    const icons = {
+      "ဆိုင်": "🛍️",
+      "စားသောက်ဆိုင်": "🍜",
+      "ကျန်းမာရေး": "🏥",
+      "ဟိုတယ်": "🏨",
+      "ဝန်ဆောင်မှု": "🛠️"
+    };
+    return icons[category] || "📍";
+  }
 
-target.innerHTML=found.map(p=>`
-<article class="place">
-<span class="tag">${safe(names[p.category]||p.category)}</span>
-<h3>${safe(p.name)}</h3>
-<div class="details">📍 ${safe(p.address)}<br>🏘️ ${safe(p.town)}
-${p.phone?"<br>📞 "+safe(p.phone):""}</div>
-<div class="actions">
-${p.phone?`<a href="tel:${encodeURIComponent(p.phone)}">📞 ဖုန်းခေါ်</a>`:""}
-<a href="${maps(p)}" target="_blank" rel="noopener noreferrer">🗺️ Maps</a>
-</div>
-</article>`).join("");
-}
+  function safeText(value) {
+    return String(value ?? "");
+  }
 
-function renderAdmin(){
-document.getElementById("adminPlaces").innerHTML=places.length?places.map(p=>`
-<div class="place">
-<strong>${safe(p.name)}</strong>
-<div class="details">${safe(p.town)} · ${safe(names[p.category]||p.category)}</div>
-<div class="actions">
-<button data-edit="${safe(p.id)}">✏️ ပြင်ရန်</button>
-<button class="danger" data-del="${safe(p.id)}">🗑️ ဖျက်ရန်</button>
-</div>
-</div>`).join(""):'<p class="muted">ဆိုင်မရှိသေးပါ။</p>';
-}
+  function validMapsLink(value) {
+    if (!value) return "";
+    try {
+      const url = new URL(value);
+      if (url.protocol !== "https:" && url.protocol !== "http:") return "";
+      if (!/google\.[a-z.]+$/i.test(url.hostname) &&
+          !/maps\.app\.goo\.gl$/i.test(url.hostname) &&
+          !/goo\.gl$/i.test(url.hostname)) return "";
+      return url.href;
+    } catch {
+      return "";
+    }
+  }
 
-document.querySelectorAll("nav button").forEach(btn=>{
-btn.addEventListener("click",()=>{
-document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b===btn));
-document.getElementById("homePage").classList.toggle("hidden",btn.dataset.page!=="home");
-document.getElementById("adminPage").classList.toggle("hidden",btn.dataset.page!=="admin");
-});
-});
+  function mapsUrl(business) {
+    const supplied = validMapsLink(business.map);
+    if (supplied) return supplied;
 
-document.querySelectorAll(".category").forEach(btn=>{
-btn.addEventListener("click",()=>{
-categoryFilter=btn.dataset.cat;
-document.querySelectorAll(".category").forEach(b=>b.classList.toggle("active",b===btn));
-render();
-});
-});
+    const query = [business.name, business.address, business.town]
+      .filter(Boolean).join(", ");
 
-document.getElementById("town").addEventListener("change",render);
-document.getElementById("search").addEventListener("input",render);
+    return "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(query);
+  }
 
-document.getElementById("loginBtn").addEventListener("click",()=>{
-if(document.getElementById("pin").value===ADMIN_PIN){
-isAdmin=true;
-document.getElementById("loginPanel").classList.add("hidden");
-document.getElementById("adminPanel").classList.remove("hidden");
-document.getElementById("loginMessage").textContent="";
-document.getElementById("pin").value="";
-renderAdmin();
-}else{
-document.getElementById("loginMessage").textContent="PIN မှားနေပါတယ်။";
-}
-});
+  function makeTextElement(tag, className, text) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    el.textContent = safeText(text);
+    return el;
+  }
 
-document.getElementById("logoutBtn").addEventListener("click",()=>{
-isAdmin=false;
-resetForm();
-document.getElementById("adminPanel").classList.add("hidden");
-document.getElementById("loginPanel").classList.remove("hidden");
-});
+  function renderBusinesses() {
+    const search = $("searchInput").value.trim().toLowerCase();
+    const town = $("townFilter").value;
+    const sort = $("sortFilter").value;
 
-document.getElementById("placeForm").addEventListener("submit",e=>{
-e.preventDefault();
-if(!isAdmin)return;
+    let filtered = businesses.filter(b => {
+      const haystack = [
+        b.name, b.address, b.town, b.category, b.phone, b.description
+      ].map(safeText).join(" ").toLowerCase();
 
-const id=document.getElementById("editId").value;
-const item={
-id:id||"p"+Date.now(),
-name:document.getElementById("name").value.trim(),
-category:document.getElementById("category").value,
-town:document.getElementById("placeTown").value.trim(),
-address:document.getElementById("address").value.trim(),
-phone:document.getElementById("phone").value.trim(),
-mapUrl:document.getElementById("mapUrl").value.trim()
-};
+      return (!search || haystack.includes(search)) &&
+        (!town || b.town === town) &&
+        (!activeCategory || b.category === activeCategory);
+    });
 
-if(!item.name||!item.town||!item.address)return;
-if(item.mapUrl&&!/^https:\/\/(www\.)?(google\.[a-z.]+|maps\.google\.com)/i.test(item.mapUrl)){
-alert("Google Maps HTTPS Link ထည့်ပါ၊ မထည့်လိုပါက ကွက်လပ်ထားပါ။");
-return;
-}
+    if (sort === "name") {
+      filtered.sort((a, b) => safeText(a.name).localeCompare(safeText(b.name)));
+    } else {
+      filtered.sort((a, b) => (Number(b.createdAt) || 0) -
+        (Number(a.createdAt) || 0));
+    }
 
-const old=places;
-places=id?places.map(p=>p.id===id?item:p):[item,...places];
-if(!saveData()){places=old;return;}
+    $("resultCount").textContent = filtered.length + " ဆိုင်";
+    const list = $("businessList");
+    list.replaceChildren();
 
-resetForm();
-render();
-renderAdmin();
-alert("သိမ်းပြီးပါပြီ။");
-});
+    if (filtered.length === 0) {
+      list.append(makeTextElement(
+        "div", "empty", "ဆိုင်စာရင်း မတွေ့ပါ။ ရှာဖွေမှုကို ပြောင်းကြည့်ပါ။"
+      ));
+      return;
+    }
 
-document.getElementById("adminPlaces").addEventListener("click",e=>{
-if(!isAdmin)return;
-const edit=e.target.closest("[data-edit]");
-const del=e.target.closest("[data-del]");
+    filtered.forEach(b => {
+      const card = document.createElement("article");
+      card.className = "business-card";
 
-if(edit){
-const p=places.find(x=>x.id===edit.dataset.edit);
-if(!p)return;
-document.getElementById("editId").value=p.id;
-document.getElementById("name").value=p.name;
-document.getElementById("category").value=p.category;
-document.getElementById("placeTown").value=p.town;
-document.getElementById("address").value=p.address;
-document.getElementById("phone").value=p.phone;
-document.getElementById("mapUrl").value=p.mapUrl;
-document.getElementById("formTitle").textContent="✏️ ဆိုင်ပြင်ရန်";
-document.getElementById("cancelEdit").classList.remove("hidden");
-window.scrollTo({top:0,behavior:"smooth"});
-}
+      card.append(makeTextElement("div", "business-icon", iconFor(b.category)));
+      card.append(makeTextElement("span", "tag", b.category));
+      card.append(makeTextElement("h3", "", b.name));
+      card.append(makeTextElement("p", "", "📍 " + b.town + " · " + b.address));
 
-if(del){
-const p=places.find(x=>x.id===del.dataset.del);
-if(!p||!confirm(p.name+" ကို ဖျက်မှာ သေချာပါသလား?"))return;
-const old=places;
-places=places.filter(x=>x.id!==p.id);
-if(!saveData()){places=old;return;}
-render();
-renderAdmin();
-}
-});
+      if (b.phone) {
+        card.append(makeTextElement("p", "", "☎ " + b.phone));
+      }
 
-function resetForm(){
-document.getElementById("placeForm").reset();
-document.getElementById("editId").value="";
-document.getElementById("formTitle").textContent="➕ ဆိုင်အသစ်ထည့်ရန်";
-document.getElementById("cancelEdit").classList.add("hidden");
-}
+      if (b.description) {
+        card.append(makeTextElement("p", "", b.description));
+      }
 
-document.getElementById("cancelEdit").addEventListener("click",resetForm);
-render();
+      if (b.demo) {
+        card.append(makeTextElement("p", "notice", "နမူနာစာရင်း"));
+      }
+
+      const actions = document.createElement("div");
+      actions.className = "card-actions";
+
+      const mapButton = makeTextElement("button", "primary", "📍 Maps");
+      mapButton.type = "button";
+      mapButton.addEventListener("click", () => {
+        window.open(mapsUrl(b), "_blank", "noopener,noreferrer");
+      });
+      actions.append(mapButton);
+
+      if (b.phone) {
+        const callButton = makeTextElement("button", "", "☎ ဖုန်းခေါ်");
+        callButton.type = "button";
+        callButton.addEventListener("click", () => {
+          window.location.href = "tel:" + safeText(b.phone).replace(/[^\d+]/g, "");
+        });
+        actions.append(callButton);
+      }
+
+      if (isAdmin && !b.demo) {
+        const editButton = makeTextElement("button", "", "ပြင်မယ်");
+        editButton.type = "button";
+        editButton.addEventListener("click", () => editBusiness(b.id));
+        actions.append(editButton);
+
+        const deleteButton = makeTextElement("button", "danger", "ဖျက်မယ်");
+        deleteButton.type = "button";
+        deleteButton.addEventListener("click", () => deleteBusiness(b.id));
+        actions.append(deleteButton);
+      }
+
+      card.append(actions);
+      list.append(card);
+    });
+  }
+
+  function setAdmin(value) {
+    isAdmin = value;
+    $("loginArea").classList.toggle("hidden", value);
+    $("adminArea").classList.toggle("hidden", !value);
+    renderBusinesses();
+  }
+
+  $("loginButton").addEventListener("click", () => {
+    if ($("adminPin").value === ADMIN_PIN) {
+      $("loginMessage").textContent = "";
+      $("adminPin").value = "";
+      setAdmin(true);
+    } else {
+      $("loginMessage").textContent = "PIN မမှန်ပါ။ ပြန်စစ်ပါ။";
+    }
+  });
+
+  $("logoutButton").addEventListener("click", () => {
+    setAdmin(false);
+    resetForm();
+  });
+
+  $("searchInput").addEventListener("input", renderBusinesses);
+  $("townFilter").addEventListener("change", renderBusinesses);
+  $("sortFilter").addEventListener("change", renderBusinesses);
+
+  $("categoryButtons").addEventListener("click", event => {
+    const button = event.target.closest("button[data-category]");
+    if (!button) return;
+
+    activeCategory = button.dataset.category;
+
+    $("categoryButtons").querySelectorAll("button").forEach(btn => {
+      btn.classList.toggle("active", btn === button);
+    });
+
+    renderBusinesses();
+  });
+
+  function resetForm() {
+    $("businessForm").reset();
+    $("businessId").value = "";
+    $("formTitle").textContent = "ဆိုင်အသစ်ထည့်ရန်";
+    $("saveButton").textContent = "ဆိုင်သိမ်းမယ်";
+    $("cancelEditButton").classList.add("hidden");
+    $("formMessage").textContent = "";
+  }
+
+  function editBusiness(id) {
+    const b = businesses.find(item => item.id === id);
+    if (!b) return;
+
+    $("businessId").value = b.id;
+    $("businessName").value = b.name || "";
+    $("businessTown").value = b.town || "";
+    $("businessCategory").value = b.category || "ဆိုင်";
+    $("businessAddress").value = b.address || "";
+    $("businessPhone").value = b.phone || "";
+    $("businessMap").value = b.map || "";
+    $("businessDescription").value = b.description || "";
+
+    $("formTitle").textContent = "ဆိုင်စာရင်းပြင်ရန်";
+    $("saveButton").textContent = "ပြင်ဆင်ချက်သိမ်းမယ်";
+    $("cancelEditButton").classList.remove("hidden");
+
+    $("businessForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function deleteBusiness(id) {
+    const b = businesses.find(item => item.id === id);
+    if (!b) return;
+
+    if (!confirm("“" + b.name + "” ကို ဖျက်မှာ သေချာပါသလား?")) return;
+
+    const previous = businesses;
+    businesses = businesses.filter(item => item.id !== id);
+
+    if (persistBusinesses()) {
+      renderBusinesses();
+      resetForm();
+    } else {
+      businesses = previous;
+    }
+  }
+
+  $("cancelEditButton").addEventListener("click", resetForm);
+
+  $("businessForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (!isAdmin) {
+      $("formMessage").textContent = "Admin အဖြစ် အရင်ဝင်ပါ။";
+      return;
+    }
+
+    const id = $("businessId").value;
+    const existing = businesses.find(item => item.id === id);
+
+    const business = {
+      id: id || (crypto.randomUUID
+        ? crypto.randomUUID()
+        : "business-" + Date.now()),
+      name: $("businessName").value.trim(),
+      town: $("businessTown").value,
+      category: $("businessCategory").value,
+      address: $("businessAddress").value.trim(),
+      phone: $("businessPhone").value.trim(),
+      map: $("businessMap").value.trim(),
+      description: $("businessDescription").value.trim(),
+      createdAt: existing ? existing.createdAt : Date.now(),
+      demo: false
+    };
+
+    if (!business.name || !business.town || !business.address) {
+      $("formMessage").textContent = "အမည်၊ မြို့၊ လိပ်စာတို့ကို ဖြည့်ပါ။";
+      return;
+    }
+
+    if (business.map && !validMapsLink(business.map)) {
+      $("formMessage").textContent =
+        "Google Maps Link မမှန်ပါ။ Maps Link ကို ပြန်စစ်ပါ၊ သို့မဟုတ် ဗလာထားပါ။";
+      return;
+    }
+
+    const previous = businesses.slice();
+
+    if (id) {
+      businesses = businesses.map(item => item.id === id ? business : item);
+    } else {
+      businesses.push(business);
+    }
+
+    if (persistBusinesses()) {
+      resetForm();
+      renderBusinesses();
+      $("formMessage").textContent = "ဆိုင်စာရင်းကို သိမ်းပြီးပါပြီ။";
+    } else {
+      businesses = previous;
+    }
+  });
+
+  renderBusinesses();
+})();
 </script>
 </body>
 </html>
