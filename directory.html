@@ -1,0 +1,340 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087f5b">
+<title>Myanmar Town Directory</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f2f6f4;color:#1d2b27;font-family:Arial,sans-serif}
+header{padding:22px 16px;background:#087f5b;color:white}
+header h1{margin:0;font-size:24px}
+header p{margin:8px 0 0;font-size:14px}
+nav{display:flex;gap:8px;padding:10px;background:white;position:sticky;top:0;z-index:5}
+nav button{flex:1;padding:12px 5px;border:0;border-radius:9px;background:#e8f5ef;color:#087f5b;font-weight:bold}
+nav button.active{background:#087f5b;color:white}
+main{max-width:720px;margin:auto;padding:15px}
+.panel,.place{background:white;padding:15px;border-radius:13px;margin-bottom:13px;box-shadow:0 2px 8px #00000008}
+h2{font-size:19px;margin:5px 0 14px}
+h3{margin:8px 0}
+label{font-size:14px;font-weight:bold}
+input,select,textarea{display:block;width:100%;padding:12px;margin:8px 0 13px;border:1px solid #d4e0da;border-radius:9px;background:white;font:inherit}
+textarea{min-height:70px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.category{padding:12px 4px;border:1px solid #d9e8df;border-radius:9px;background:white;color:#087f5b;font-weight:bold}
+.category.active{background:#087f5b;color:white}
+.tag{display:inline-block;padding:5px 8px;border-radius:6px;background:#e6f5ec;color:#087f5b;font-size:12px}
+.details{color:#53635b;font-size:14px;line-height:1.8}
+.actions{display:flex;gap:8px;margin-top:12px}
+.actions a,.actions button{flex:1;text-align:center;padding:10px 4px;border:0;border-radius:8px;background:#e6f5ec;color:#087f5b;text-decoration:none;font-weight:bold;font-size:13px}
+.primary{width:100%;padding:13px;background:#087f5b;color:white;border:0;border-radius:9px;font-weight:bold}
+.secondary{padding:10px;border:0;border-radius:8px;background:#e7eee9;color:#214537}
+.danger{background:#ffeded!important;color:#ad2525!important}
+.hidden{display:none!important}
+.muted{font-size:13px;color:#687871;line-height:1.6}
+.notice{background:#fff7df;color:#715316;padding:12px;border-radius:9px;font-size:13px;line-height:1.6}
+.empty{text-align:center;padding:24px;color:#75837b}
+footer{text-align:center;color:#78867e;font-size:12px;padding:20px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🏘️ Myanmar Directory</h1>
+<p>မြို့နယ်အလိုက် ဆိုင်များနှင့် ဝန်ဆောင်မှုများ</p>
+</header>
+
+<nav>
+<button class="active" data-page="home">🏠 Home</button>
+<button data-page="admin">🔐 Admin</button>
+</nav>
+
+<main>
+<section id="homePage">
+<div class="panel">
+<label for="town">မြို့နယ်ရွေးချယ်ပါ</label>
+<select id="town">
+<option value="All">မြို့နယ်အားလုံး</option>
+<option>ရန်ကုန်</option>
+<option>မန္တလေး</option>
+<option>နေပြည်တော်</option>
+<option>မော်လမြိုင်</option>
+<option>ပုဂံ</option>
+<option>တောင်ကြီး</option>
+<option>ပဲခူး</option>
+</select>
+
+<label for="search">ဆိုင်ရှာရန်</label>
+<input id="search" placeholder="ဆိုင်အမည်၊ လိပ်စာ ရိုက်ပါ...">
+</div>
+
+<div class="grid" id="categories">
+<button class="category active" data-cat="All">📋 အားလုံး</button>
+<button class="category" data-cat="Shop">🛍️ ဆိုင်များ</button>
+<button class="category" data-cat="Food">🍜 စားသောက်ဆိုင်</button>
+<button class="category" data-cat="Health">🏥 ဆေးခန်း</button>
+<button class="category" data-cat="Hotel">🏨 ဟိုတယ်</button>
+<button class="category" data-cat="Service">🔧 ဝန်ဆောင်မှု</button>
+</div>
+
+<h2>📍 ဆိုင်နှင့် ဝန်ဆောင်မှုများ</h2>
+<div id="places"></div>
+</section>
+
+<section id="adminPage" class="hidden">
+<div class="panel" id="loginPanel">
+<h2>🔐 Admin Login</h2>
+<p class="muted">Demo PIN: 1234 (စမ်းသပ်ရန်သာဖြစ်ပြီး လုံခြုံသော Login မဟုတ်ပါ။)</p>
+<label for="pin">Admin PIN</label>
+<input id="pin" type="password" inputmode="numeric" placeholder="PIN ထည့်ပါ">
+<button class="primary" id="loginBtn">Login</button>
+<p id="loginMessage" class="muted"></p>
+</div>
+
+<div id="adminPanel" class="hidden">
+<div class="panel">
+<h2 id="formTitle">➕ ဆိုင်အသစ်ထည့်ရန်</h2>
+<form id="placeForm">
+<input id="editId" type="hidden">
+
+<label for="name">ဆိုင်အမည် *</label>
+<input id="name" required maxlength="100" placeholder="ဆိုင်အမည်">
+
+<label for="category">အမျိုးအစား *</label>
+<select id="category" required>
+<option value="Shop">ဆိုင်များ</option>
+<option value="Food">စားသောက်ဆိုင်</option>
+<option value="Health">ဆေးခန်း</option>
+<option value="Hotel">ဟိုတယ်</option>
+<option value="Service">ဝန်ဆောင်မှု</option>
+</select>
+
+<label for="placeTown">မြို့နယ် *</label>
+<input id="placeTown" required placeholder="ဥပမာ - ရန်ကုန်">
+
+<label for="address">လိပ်စာ *</label>
+<textarea id="address" required placeholder="လမ်း၊ ရပ်ကွက်၊ မြို့နယ်"></textarea>
+
+<label for="phone">ဖုန်းနံပါတ်</label>
+<input id="phone" type="tel" maxlength="25" placeholder="ဖုန်းနံပါတ်">
+
+<label for="mapUrl">Google Maps Link (ရှိလျှင်)</label>
+<input id="mapUrl" type="url" placeholder="https://maps.google.com/...">
+
+<button class="primary" type="submit">💾 သိမ်းမည်</button>
+<button class="secondary hidden" type="button" id="cancelEdit" style="width:100%;margin-top:8px">ပယ်ဖျက်မည်</button>
+</form>
+</div>
+
+<div class="panel">
+<h2>📋 ဆိုင်စာရင်း စီမံရန်</h2>
+<div id="adminPlaces"></div>
+<button class="secondary" id="logoutBtn">Logout</button>
+</div>
+
+<div class="notice">ဤ Demo သည် လက်ရှိ Browser ထဲမှာသာ အချက်အလက်သိမ်းပါသည်။ အခြားဖုန်းများနှင့် မျှဝေရန် Database ချိတ်ဆက်ရန် လိုအပ်သည်။</div>
+</div>
+</section>
+</main>
+
+<footer>Myanmar Town Directory • Demo Version</footer>
+
+<script>
+const KEY="townDirectoryData";
+const ADMIN_PIN="1234";
+
+const samples=[
+{id:"s1",name:"နမူနာ ကုန်စုံဆိုင်",category:"Shop",town:"ရန်ကုန်",address:"နမူနာလိပ်စာ၊ ရန်ကုန်",phone:"",mapUrl:""},
+{id:"s2",name:"နမူနာ စားသောက်ဆိုင်",category:"Food",town:"မန္တလေး",address:"နမူနာလိပ်စာ၊ မန္တလေး",phone:"",mapUrl:""},
+{id:"s3",name:"နမူနာ ဆေးခန်း",category:"Health",town:"ပဲခူး",address:"နမူနာလိပ်စာ၊ ပဲခူး",phone:"",mapUrl:""}
+];
+
+function loadData(){
+try{
+const saved=localStorage.getItem(KEY);
+return saved?JSON.parse(saved):samples;
+}catch(e){return samples;}
+}
+let places=loadData();
+let categoryFilter="All";
+let isAdmin=false;
+
+function saveData(){
+try{
+localStorage.setItem(KEY,JSON.stringify(places));
+return true;
+}catch(e){
+alert("Data သိမ်းမရပါ။ Browser Storage ကို စစ်ဆေးပါ။");
+return false;
+}
+}
+
+function safe(value){
+return String(value??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+}
+
+const names={Shop:"ဆိုင်များ",Food:"စားသောက်ဆိုင်",Health:"ဆေးခန်း",Hotel:"ဟိုတယ်",Service:"ဝန်ဆောင်မှု"};
+
+function maps(p){
+if(p.mapUrl && /^https:\/\/(www\.)?(google\.[a-z.]+|maps\.google\.com)/i.test(p.mapUrl))return p.mapUrl;
+return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.name+" "+p.address+" "+p.town+" Myanmar");
+}
+
+function render(){
+const town=document.getElementById("town").value;
+const q=document.getElementById("search").value.toLowerCase().trim();
+const found=places.filter(p=>
+(town==="All"||p.town===town)&&
+(categoryFilter==="All"||p.category===categoryFilter)&&
+[p.name,p.address,p.town,p.category].join(" ").toLowerCase().includes(q)
+);
+const target=document.getElementById("places");
+
+if(!found.length){
+target.innerHTML='<div class="empty">ဆိုင်မတွေ့ပါ။</div>';
+return;
+}
+
+target.innerHTML=found.map(p=>`
+<article class="place">
+<span class="tag">${safe(names[p.category]||p.category)}</span>
+<h3>${safe(p.name)}</h3>
+<div class="details">📍 ${safe(p.address)}<br>🏘️ ${safe(p.town)}
+${p.phone?"<br>📞 "+safe(p.phone):""}</div>
+<div class="actions">
+${p.phone?`<a href="tel:${encodeURIComponent(p.phone)}">📞 ဖုန်းခေါ်</a>`:""}
+<a href="${maps(p)}" target="_blank" rel="noopener noreferrer">🗺️ Maps</a>
+</div>
+</article>`).join("");
+}
+
+function renderAdmin(){
+document.getElementById("adminPlaces").innerHTML=places.length?places.map(p=>`
+<div class="place">
+<strong>${safe(p.name)}</strong>
+<div class="details">${safe(p.town)} · ${safe(names[p.category]||p.category)}</div>
+<div class="actions">
+<button data-edit="${safe(p.id)}">✏️ ပြင်ရန်</button>
+<button class="danger" data-del="${safe(p.id)}">🗑️ ဖျက်ရန်</button>
+</div>
+</div>`).join(""):'<p class="muted">ဆိုင်မရှိသေးပါ။</p>';
+}
+
+document.querySelectorAll("nav button").forEach(btn=>{
+btn.addEventListener("click",()=>{
+document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b===btn));
+document.getElementById("homePage").classList.toggle("hidden",btn.dataset.page!=="home");
+document.getElementById("adminPage").classList.toggle("hidden",btn.dataset.page!=="admin");
+});
+});
+
+document.querySelectorAll(".category").forEach(btn=>{
+btn.addEventListener("click",()=>{
+categoryFilter=btn.dataset.cat;
+document.querySelectorAll(".category").forEach(b=>b.classList.toggle("active",b===btn));
+render();
+});
+});
+
+document.getElementById("town").addEventListener("change",render);
+document.getElementById("search").addEventListener("input",render);
+
+document.getElementById("loginBtn").addEventListener("click",()=>{
+if(document.getElementById("pin").value===ADMIN_PIN){
+isAdmin=true;
+document.getElementById("loginPanel").classList.add("hidden");
+document.getElementById("adminPanel").classList.remove("hidden");
+document.getElementById("loginMessage").textContent="";
+document.getElementById("pin").value="";
+renderAdmin();
+}else{
+document.getElementById("loginMessage").textContent="PIN မှားနေပါတယ်။";
+}
+});
+
+document.getElementById("logoutBtn").addEventListener("click",()=>{
+isAdmin=false;
+resetForm();
+document.getElementById("adminPanel").classList.add("hidden");
+document.getElementById("loginPanel").classList.remove("hidden");
+});
+
+document.getElementById("placeForm").addEventListener("submit",e=>{
+e.preventDefault();
+if(!isAdmin)return;
+
+const id=document.getElementById("editId").value;
+const item={
+id:id||"p"+Date.now(),
+name:document.getElementById("name").value.trim(),
+category:document.getElementById("category").value,
+town:document.getElementById("placeTown").value.trim(),
+address:document.getElementById("address").value.trim(),
+phone:document.getElementById("phone").value.trim(),
+mapUrl:document.getElementById("mapUrl").value.trim()
+};
+
+if(!item.name||!item.town||!item.address)return;
+if(item.mapUrl&&!/^https:\/\/(www\.)?(google\.[a-z.]+|maps\.google\.com)/i.test(item.mapUrl)){
+alert("Google Maps HTTPS Link ထည့်ပါ၊ မထည့်လိုပါက ကွက်လပ်ထားပါ။");
+return;
+}
+
+const old=places;
+places=id?places.map(p=>p.id===id?item:p):[item,...places];
+if(!saveData()){places=old;return;}
+
+resetForm();
+render();
+renderAdmin();
+alert("သိမ်းပြီးပါပြီ။");
+});
+
+document.getElementById("adminPlaces").addEventListener("click",e=>{
+if(!isAdmin)return;
+const edit=e.target.closest("[data-edit]");
+const del=e.target.closest("[data-del]");
+
+if(edit){
+const p=places.find(x=>x.id===edit.dataset.edit);
+if(!p)return;
+document.getElementById("editId").value=p.id;
+document.getElementById("name").value=p.name;
+document.getElementById("category").value=p.category;
+document.getElementById("placeTown").value=p.town;
+document.getElementById("address").value=p.address;
+document.getElementById("phone").value=p.phone;
+document.getElementById("mapUrl").value=p.mapUrl;
+document.getElementById("formTitle").textContent="✏️ ဆိုင်ပြင်ရန်";
+document.getElementById("cancelEdit").classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+if(del){
+const p=places.find(x=>x.id===del.dataset.del);
+if(!p||!confirm(p.name+" ကို ဖျက်မှာ သေချာပါသလား?"))return;
+const old=places;
+places=places.filter(x=>x.id!==p.id);
+if(!saveData()){places=old;return;}
+render();
+renderAdmin();
+}
+});
+
+function resetForm(){
+document.getElementById("placeForm").reset();
+document.getElementById("editId").value="";
+document.getElementById("formTitle").textContent="➕ ဆိုင်အသစ်ထည့်ရန်";
+document.getElementById("cancelEdit").classList.add("hidden");
+}
+
+document.getElementById("cancelEdit").addEventListener("click",resetForm);
+render();
+</script>
+</body>
+</html>
