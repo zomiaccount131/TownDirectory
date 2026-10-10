@@ -1,17 +1,14 @@
+
 {
-  "name": "Town Directory Tamu",
-  "short_name": "TownDir",
-  "description": "Tamu Town Directory - Find Shops, Hospitals, Schools, Restaurants quickly",
-  "start_url": "./index.html",
+  "id": "/TownDirectory/",
+  "name": "Myanmar Town Directory",
+  "short_name": "Town Directory",
+  "description": "Find local shops, food, hotels and services in Myanmar.",
+  "start_url": "/TownDirectory/town-directory.html",
+  "scope": "/TownDirectory/",
   "display": "standalone",
-  "background_color": "#2563EB",
-  "theme_color": "#2563EB",
-  "icons": [
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1565c0",
+  "icons": []
 }
